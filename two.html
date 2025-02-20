@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1596,7 +1597,75 @@ body {
         document.body.style.overscrollBehavior = 'none';
         canvas.style.touchAction = 'none';
     };
-    
+    // Color picker functionality with touch support
+colorOptions.forEach(option => {
+    // Existing mouse click handler
+    option.addEventListener('click', (e) => {
+        currentColor = option.style.backgroundColor;
+        colorPreview.style.backgroundColor = currentColor;
+        colorOptions.forEach(opt => opt.classList.remove('active'));
+        option.classList.add('active');
+        updateCursor();
+    });
+
+    // Add touch handlers
+    option.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Prevent scrolling/zooming
+        currentColor = option.style.backgroundColor;
+        colorPreview.style.backgroundColor = currentColor;
+        colorOptions.forEach(opt => opt.classList.remove('active'));
+        option.classList.add('active');
+        updateCursor();
+    });
+});
+
+// Neon color picker functionality with touch support
+neonColorOptions.forEach(option => {
+    // Existing mouse click handler
+    option.addEventListener('click', (e) => {
+        currentNeonColor = option.style.backgroundColor;
+        neonPreview.style.backgroundColor = currentNeonColor;
+        neonColorOptions.forEach(opt => opt.classList.remove('active'));
+        option.classList.add('active');
+        updateCursor();
+    });
+
+    // Add touch handlers
+    option.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Prevent scrolling/zooming
+        currentNeonColor = option.style.backgroundColor;
+        neonPreview.style.backgroundColor = currentNeonColor;
+        neonColorOptions.forEach(opt => opt.classList.remove('active'));
+        option.classList.add('active');
+        updateCursor();
+    });
+});
+
+// Add CSS fixes for better touch interaction
+const style = document.createElement('style');
+style.textContent = `
+    .color-option {
+        min-width: 30px;
+        min-height: 30px;
+        margin: 4px;
+        touch-action: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .color-preview,
+    .neon-preview {
+        min-width: 30px;
+        min-height: 30px;
+        touch-action: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Ensure dropdown stays open on touch devices */
+    .dropdown.active {
+        display: block !important;
+    }
+`;
+document.head.appendChild(style);
     // Call initialize at the end of your script
     initialize();
 
