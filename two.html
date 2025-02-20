@@ -8,6 +8,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enhanced Online Whiteboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<script>
+
+		(function () {
+  const scriptURL = "YOUR_GOOGLE_APPS_SCRIPT_URL"; // Replace this
+
+  console.log("Click tracking script loaded."); // Debug log
+  console.log("Sending data to:", scriptURL); 
+
+  document.addEventListener("click", (event) => {
+    const element = event.target;
+    const tagName = element.tagName.toLowerCase();
+    const elementID = element.id || `auto-id-${Math.random().toString(36).substr(2, 9)}`;
+
+    console.log("Clicked element:", tagName, "ID:", elementID); // Debugging log
+
+    fetch(scriptURL, {
+      method: "POST",
+      body: JSON.stringify({
+        websiteFolder: window.location.hostname,
+        tagName,
+        elementID,
+        clicks: 1,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then(response => response.text())
+    .then(data => console.log("Response from Google Sheets:", data))
+    .catch(error => console.error("Error sending data:", error));
+  });
+})();
+
+	</script>
     <style>
 /* Base Styles */
 body {
