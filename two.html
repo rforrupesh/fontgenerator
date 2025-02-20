@@ -572,7 +572,6 @@ body {
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
-   
      const canvas = document.getElementById("whiteboard");
     const ctx = canvas.getContext("2d");
     const penTool = document.getElementById("penTool");
@@ -1434,134 +1433,8 @@ body {
             }
         });
     });
-[... All existing code remains the same until the color picker functionality ...]
-
-// NEW CODE: Replace existing color picker functionality with this updated version
-colorOptions.forEach(option => {
-    ['click', 'touchend'].forEach(eventType => {
-        option.addEventListener(eventType, function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            currentColor = this.style.backgroundColor;
-            colorPreview.style.backgroundColor = currentColor;
-            
-            colorOptions.forEach(opt => opt.classList.remove('active'));
-            this.classList.add('active');
-            
-            const dropdown = this.closest('.dropdown');
-            if (dropdown) {
-                dropdown.classList.add('active');
-            }
-            
-            updateCursor();
-        });
-    });
-});
-
-// NEW CODE: Replace existing neon color picker functionality
-neonColorOptions.forEach(option => {
-    ['click', 'touchend'].forEach(eventType => {
-        option.addEventListener(eventType, function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            currentNeonColor = this.style.backgroundColor;
-            neonPreview.style.backgroundColor = currentNeonColor;
-            
-            neonColorOptions.forEach(opt => opt.classList.remove('active'));
-            this.classList.add('active');
-            
-            const dropdown = this.closest('.dropdown');
-            if (dropdown) {
-                dropdown.classList.add('active');
-            }
-            
-            updateCursor();
-        });
-    });
-});
-
-// NEW CODE: Add touch event handler for dropdowns
-document.addEventListener('touchend', function(e) {
-    if (e.target.closest('.color-option') || e.target.closest('.dropdown-content')) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-}, true);
-
-// NEW CODE: Update the dropdown click handler
-document.addEventListener('click', (e) => {
-    const dropdowns = document.querySelectorAll('.dropdown');
-    dropdowns.forEach(dropdown => {
-        if (!dropdown.contains(e.target)) {
-            dropdown.classList.remove('active');
-        }
-    });
-});
-
-// NEW CODE: Add mobile-friendly styles
-const mobileStyles = document.createElement('style');
-mobileStyles.textContent = `
-    .color-option {
-        cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-        touch-action: manipulation;
-    }
-
-    .dropdown.active .dropdown-content {
-        display: block !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-    }
-
-    .dropdown-content {
-        touch-action: manipulation;
-    }
-`;
-document.head.appendChild(mobileStyles);
-
-[... Rest of the existing code remains the same ...]
-
-// Update initialize function with mobile optimizations
-function initialize() {
-    // Set initial text box state for all existing pages
-    for (let i = 0; i < pages.length; i++) {
-        if (typeof pages[i] === 'string') {
-            pages[i] = {
-                canvasData: pages[i],
-                textBoxes: []
-            };
-        }
-    }
     
-    resizeCanvas();
-    clearCanvasContent();
-    updateThumbnails();
-    updateCursor();
-
-    // Initialize first colors
-    colorPreview.style.backgroundColor = currentColor;
-    neonPreview.style.backgroundColor = currentNeonColor;
-    colorOptions[0].classList.add('active');
-    neonColorOptions[0].classList.add('active');
-
-    // NEW CODE: Add mobile-specific viewport settings
-    let viewportMeta = document.querySelector('meta[name="viewport"]');
-    if (!viewportMeta) {
-        viewportMeta = document.createElement('meta');
-        viewportMeta.name = 'viewport';
-        document.head.appendChild(viewportMeta);
-    }
-    viewportMeta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-    
-    // NEW CODE: Additional mobile optimizations
-    document.body.style.overscrollBehavior = 'none';
-    canvas.style.touchAction = 'none';
-}
-
-[... Rest of the existing code remains the same ...]
-// Initialize
+    // Initialize
     function initialize() {
         // Set initial text box state for all existing pages
         for (let i = 0; i < pages.length; i++) {
@@ -1814,7 +1687,7 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-initialize(); // Call initialize at the end
+    initialize();
 
    
     </script>
