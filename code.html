@@ -472,16 +472,33 @@ body {
 }
 
 
-.toolbar {
-    /* Add to existing toolbar styles */
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-#shareContainer {
+/* Add these styles to your existing CSS */
+.share-controls {
     margin-left: auto;
 }
+
+.share-controls .tool-btn {
+    background-color: #28a745;
+}
+
+.share-controls .tool-btn:hover {
+    background-color: #218838;
+}
+
+.share-controls .tool-btn[title="Delete Shared Whiteboard"] {
+    background-color: #dc3545;
+}
+
+.share-controls .tool-btn[title="Delete Shared Whiteboard"]:hover {
+    background-color: #c82333;
+}
+
+@media (max-width: 768px) {
+    .share-controls {
+        margin-left: 0;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -561,11 +578,6 @@ body {
             <button id="clearCanvas" class="tool-btn"><i class="fas fa-trash"></i></button>
             <button id="fullscreenTool" class="tool-btn"><i class="fas fa-expand"></i></button>
             <button id="exportPDF" class="tool-btn"><i class="fas fa-file-pdf"></i></button>
-			
-<div class="toolbar">
-   
-    <div id="shareContainer"></div>
-</div>
         </div>
         <div class="main-content">
             <div class="page-navigation">
@@ -597,7 +609,152 @@ body {
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script>
+<script>let currentBoardId = null;
+let isOwner = false;
+
+// Add this function to generate a random 4-digit code
+function generateShareCode() {
+    return Math.floor(1000 + Math.random() * 9000).toString();
+}
+
+// Function to save whiteboard data
+function saveWhiteboardData(code) {
+    const boardData = {
+        pages: pages,
+        textBoxes: textBoxes,
+        owner: true,
+        lastModified: Date.now()
+    };
+    localStorage.setItem(`whiteboard_${code}`, JSON.stringify(boardData));
+    return code;
+}
+
+// Function to load whiteboard data
+function loadWhiteboardData(code) {
+    const data = localStorage.getItem(`whiteboard_${code}`);
+    if (data) {
+        const boardData = JSON.parse(data);
+        pages = boardData.pages;
+        textBoxes = boardData.textBoxes;
+        isOwner = boardData.owner;
+        currentBoardId = code;
+        currentPage = 0;
+        redrawCanvas();
+        updateThumbnails();
+        return true;
+    }
+    return false;
+}
+
+// Function to check URL for share code
+function checkUrlForShare() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    if (code) {
+        loadWhiteboardData(code);
+    }
+}
+
+// Function to delete shared whiteboard
+function deleteSharedWhiteboard(code) {
+    if (isOwner) {
+        localStorage.removeItem(`whiteboard_${code}`);
+        window.location.href = window.location.pathname; // Remove query params
+    }
+}
+
+// Add these to your saveState function
+function saveState() {
+    const currentState = {
+        canvasData: canvas.toDataURL(),
+        textBoxes: JSON.parse(JSON.stringify(textBoxes))
+    };
+    
+    pagesHistory[currentPage].push(currentState);
+    pagesRedoHistory[currentPage] = [];
+    updateUndoRedoButtons();
+    
+    pages[currentPage] = currentState;
+    updateThumbnails();
+    
+    // Save to localStorage if this is a shared board
+    if (currentBoardId) {
+        saveWhiteboardData(currentBoardId);
+    }
+}
+
+// Add sharing controls to the toolbar
+function addSharingControls() {
+    const toolbar = document.querySelector('.toolbar');
+    
+    const shareContainer = document.createElement('div');
+    shareContainer.className = 'share-controls';
+    shareContainer.style.display = 'flex';
+    shareContainer.style.gap = '5px';
+    shareContainer.style.alignItems = 'center';
+    
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'tool-btn';
+    shareBtn.innerHTML = '<i class="fas fa-share-alt"></i>';
+    shareBtn.title = 'Share Whiteboard';
+    
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'tool-btn';
+    deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+    deleteBtn.title = 'Delete Shared Whiteboard';
+    deleteBtn.style.display = 'none';
+    
+    shareContainer.appendChild(shareBtn);
+    shareContainer.appendChild(deleteBtn);
+    toolbar.appendChild(shareContainer);
+    
+    // Share button click handler
+    shareBtn.addEventListener('click', () => {
+        if (currentBoardId) {
+            // Copy share link to clipboard
+            const shareUrl = `${window.location.origin}${window.location.pathname}?code=${currentBoardId}`;
+            navigator.clipboard.writeText(shareUrl);
+            alert('Share link copied to clipboard!');
+        } else {
+            // Generate new share code and save board
+            const code = generateShareCode();
+            currentBoardId = code;
+            isOwner = true;
+            saveWhiteboardData(code);
+            
+            // Update URL
+            window.history.pushState({}, '', `?code=${code}`);
+            
+            // Show delete button
+            deleteBtn.style.display = 'block';
+            
+            // Copy share link to clipboard
+            const shareUrl = `${window.location.origin}${window.location.pathname}?code=${code}`;
+            navigator.clipboard.writeText(shareUrl);
+            alert('Share link copied to clipboard!');
+        }
+    });
+    
+    // Delete button click handler
+    deleteBtn.addEventListener('click', () => {
+        if (currentBoardId && isOwner) {
+            if (confirm('Are you sure you want to delete this shared whiteboard?')) {
+                deleteSharedWhiteboard(currentBoardId);
+            }
+        }
+    });
+    
+    // Check for shared board on load
+    checkUrlForShare();
+    
+    // Show delete button if owner
+    if (currentBoardId && isOwner) {
+        deleteBtn.style.display = 'block';
+    }
+}
+
+</script>   
+   <script>
      const canvas = document.getElementById("whiteboard");
     const ctx = canvas.getContext("2d");
     const penTool = document.getElementById("penTool");
@@ -1476,6 +1633,9 @@ body {
         clearCanvasContent();
         updateThumbnails();
         updateCursor();
+		addSharingControls();
+       checkUrlForShare();
+
     
         // Initialize first colors
         colorPreview.style.backgroundColor = currentColor;
@@ -1713,22 +1873,6 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-
-
-// Add to your existing JavaScript
-
-function saveCanvasState() {
-    const state = {
-        canvasData: canvas.toDataURL(),
-        textBoxes: textBoxes
-    };
-    localStorage.setItem('currentWhiteboardState', JSON.stringify(state));
-}
-
-// Call saveCanvasState() after each drawing operation or text change
-
-
     initialize();
 
    
