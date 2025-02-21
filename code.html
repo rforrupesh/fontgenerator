@@ -576,7 +576,225 @@ body {
             </div>
         </div>
 		
-		
+	`<div class="share-controls">
+    <button id="shareBtn" class="tool-btn">
+        <i class="fas fa-share-alt"></i>
+    </button>
+    <span id="connectedUsers" class="connected-users">
+        <i class="fas fa-users"></i> 1
+    </span>
+</div>
+
+<div id="shareModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Share Whiteboard</h2>
+        <div id="hostControls">
+            <button id="generateCode" class="tool-btn">Generate Share Code</button>
+            <div id="shareCode" style="display: none;">
+                <h3>Share Code: <span id="codeDisplay"></span></h3>
+                <p>Share this code with others to give them access</p>
+                <button id="endSharing" class="tool-btn">End Sharing</button>
+            </div>
+        </div>
+        <div id="joinControls">
+            <h3>Join Existing Whiteboard</h3>
+            <input type="text" id="joinCode" maxlength="4" placeholder="Enter 4-digit code">
+            <button id="joinBtn" class="tool-btn">Join</button>
+        </div>
+    </div>
+</div>`
+
+const newStyles = `
+.share-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.connected-users {
+    color: white;
+    font-size: 14px;
+    padding: 5px 10px;
+    background: #444;
+    border-radius: 4px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #333;
+    color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: white;
+}
+
+#joinCode {
+    padding: 8px;
+    font-size: 16px;
+    width: 100px;
+    margin-right: 10px;
+    border-radius: 4px;
+}
+
+#hostControls, #joinControls {
+    margin-top: 20px;
+}
+
+#shareCode {
+    margin-top: 20px;
+    padding: 15px;
+    background: #444;
+    border-radius: 4px;
+}`;
+
+class WhiteboardSharing {
+    constructor() {
+        this.peer = null;
+        this.connections = new Set();
+        this.isHost = false;
+        this.shareCode = null;
+        this.connectedUsers = 1;
+        
+        this.initializeDOM();
+        this.initializeEventListeners();
+    }
+
+    initializeDOM() {
+        this.modal = document.getElementById('shareModal');
+        this.shareBtn = document.getElementById('shareBtn');
+        this.generateBtn = document.getElementById('generateCode');
+        this.joinBtn = document.getElementById('joinBtn');
+        this.endSharingBtn = document.getElementById('endSharing');
+        this.codeDisplay = document.getElementById('codeDisplay');
+        this.joinCodeInput = document.getElementById('joinCode');
+        this.connectedUsersDisplay = document.getElementById('connectedUsers');
+        this.closeBtn = document.querySelector('.close');
+    }
+
+    initializeEventListeners() {
+        this.shareBtn.addEventListener('click', () => this.openModal());
+        this.closeBtn.addEventListener('click', () => this.closeModal());
+        this.generateBtn.addEventListener('click', () => this.generateShareCode());
+        this.joinBtn.addEventListener('click', () => this.joinWhiteboard());
+        this.endSharingBtn.addEventListener('click', () => this.endSharing());
+        window.addEventListener('click', (e) => {
+            if (e.target === this.modal) this.closeModal();
+        });
+    }
+
+    openModal() {
+        this.modal.style.display = 'block';
+    }
+
+    closeModal() {
+        this.modal.style.display = 'none';
+    }
+
+    generateShareCode() {
+        this.shareCode = Math.floor(1000 + Math.random() * 9000).toString();
+        this.isHost = true;
+        this.peer = new Peer(this.shareCode);
+        
+        this.peer.on('open', (id) => {
+            this.codeDisplay.textContent = id;
+            document.getElementById('shareCode').style.display = 'block';
+            this.generateBtn.style.display = 'none';
+        });
+
+        this.peer.on('connection', (conn) => this.handleNewConnection(conn));
+    }
+
+    handleNewConnection(conn) {
+        this.connections.add(conn);
+        this.updateConnectedUsers(1);
+        conn.on('data', (data) => this.handleIncomingData(data));
+        conn.on('close', () => {
+            this.connections.delete(conn);
+            this.updateConnectedUsers(-1);
+        });
+    }
+
+    joinWhiteboard() {
+        const code = this.joinCodeInput.value;
+        if (code.length !== 4) {
+            alert('Please enter a valid 4-digit code');
+            return;
+        }
+
+        this.peer = new Peer();
+        const conn = this.peer.connect(code);
+
+        conn.on('open', () => {
+            this.connections.add(conn);
+            this.closeModal();
+            alert('Connected to whiteboard!');
+            conn.send({ type: 'requestState' });
+        });
+
+        conn.on('data', (data) => this.handleIncomingData(data));
+    }
+
+    handleIncomingData(data) {
+        switch (data.type) {
+            case 'requestState':
+                this.sendCurrentState(data.connectionId);
+                break;
+            case 'canvasState':
+                this.updateCanvasState(data.state);
+                break;
+            case 'draw':
+                this.updateDrawing(data.drawData);
+                break;
+        }
+    }
+
+    updateConnectedUsers(change) {
+        this.connectedUsers += change;
+        this.connectedUsersDisplay.innerHTML = `<i class="fas fa-users"></i> ${this.connectedUsers}`;
+    }
+}
+
+const sharing = new WhiteboardSharing();
+
+const originalDraw = draw;
+draw = function(e) {
+    if (!isDrawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const currX = e.clientX - rect.left;
+    const currY = e.clientY - rect.top;
+    if (sharing.isHost || sharing.connections.size > 0) {
+        sharing.broadcastDrawing(lastX, lastY, currX, currY, ctx.strokeStyle, ctx.lineWidth);
+    }
+    lastX = currX;
+    lastY = currY;
+    originalDraw(e);
+};
+	
 		
 		
 		
