@@ -1,32 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Blog Listing</title>
+    <title>Blog Posts</title>
 </head>
 <body>
     <h1>Blog Posts</h1>
     <div id="blogList"></div>
 
     <script>
-        async function fetchBlogList() {
+        async function fetchGitHubBlogList() {
+            const repo = 'rforrupesh/fontgenerator';
+            const folder = 'blog';
+            const apiUrl = `https://api.github.com/repos/${repo}/contents/${folder}`;
+
             try {
-                const response = await fetch('/blog/posts.json');
-                const blogs = await response.json();
+                const response = await fetch(apiUrl);
+                const data = await response.json();
                 const blogList = document.getElementById('blogList');
 
-                blogs.forEach(blog => {
-                    const link = document.createElement('a');
-                    link.href = `/blog/${blog}`;
-                    link.innerText = blog.replace('.html', '');
-                    link.style.display = 'block';
-                    blogList.appendChild(link);
+                data.forEach(file => {
+                    if (file.name.endsWith('.html')) {
+                        const link = document.createElement('a');
+                        link.href = `/blog/${file.name}`;
+                        link.innerText = file.name.replace('.html', '');
+                        link.style.display = 'block';
+                        blogList.appendChild(link);
+                    }
                 });
             } catch (error) {
-                console.error('Error fetching blog list:', error);
+                console.error('Error fetching GitHub blog list:', error);
             }
         }
-        fetchBlogList();
+        fetchGitHubBlogList();
     </script>
 </body>
 </html>
-
