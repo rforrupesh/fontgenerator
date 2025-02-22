@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>My Blog Posts</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f9f9f9;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>📚 My Blog Posts</h1>
+    <ul id="blog-list">Loading posts...</ul>
+
+    <script>
+        async function fetchPosts() {
+            const blogList = document.getElementById('blog-list');
+
+            try {
+                const response = await fetch('./');
+                const text = await response.text();
+
+                // Extract HTML files using RegExp
+                const links = [...text.matchAll(/href="(.*?)"/g)]
+                    .map(match => match[1])
+                    .filter(file => file.endsWith('.html') && file !== 'index.html');
+
+                blogList.innerHTML = '';
+
+                if (links.length === 0) {
+                    blogList.innerHTML = '<li>No posts available.</li>';
+                } else {
+                    links.forEach(link => {
+                        const title = link.replace('.html', '').replace(/-/g, ' ');
+                        blogList.innerHTML += `<li><a href="${link}">${title}</a></li>`;
+                    });
+                }
+            } catch (error) {
+                blogList.innerHTML = '<li>Error loading posts.</li>';
+                console.error('Error fetching blog posts:', error);
+            }
+        }
+
+        fetchPosts();
+    </script>
+
+</body>
+
+</html>
