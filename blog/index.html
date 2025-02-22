@@ -5,88 +5,46 @@
     <title>My Blog Posts</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-        body {
-            background: #f8f9fa;
-        }
-
-        .container {
-            margin-top: 40px;
-        }
-
-        .blog-card {
-            transition: box-shadow 0.3s;
-        }
-
-        .blog-card:hover {
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-    </style>
 </head>
 
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">📚 My Blog</a>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container">
-        <h1 class="my-4 text-center">Latest Blog Posts</h1>
-
-        <div id="blog-list" class="row">
-            <p>Loading posts...</p>
+    <div class="container mt-5">
+        <h1 class="mb-4">📝 My Blog Posts</h1>
+        <div id="post-list" class="row">
+            <!-- Blog posts will be displayed here -->
         </div>
     </div>
 
-    <!-- Bootstrap JS (Optional for features like modals, dropdowns) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-        // Fetch and display all .html files in the /blog directory
+        // Dynamically fetch blog posts
         async function fetchPosts() {
-            const blogList = document.getElementById('blog-list');
+            const postContainer = document.getElementById('post-list');
+            
+            // Static post list (add more entries if needed)
+            const posts = [
+                { title: 'Introduction to Font Generators', url: 'post1.html', date: 'January 1, 2024' }
+            ];
 
-            try {
-                const response = await fetch('./'); // Fetch current folder
-                const text = await response.text();
-
-                // Extract HTML files (excluding index.html)
-                const links = [...text.matchAll(/href="(.*?)"/g)]
-                    .map(match => match[1])
-                    .filter(file => file.endsWith('.html') && file !== 'index.html');
-
-                blogList.innerHTML = '';
-
-                if (links.length === 0) {
-                    blogList.innerHTML = '<p>No posts available.</p>';
-                } else {
-                    links.forEach(link => {
-                        const title = link.replace('.html', '').replace(/-/g, ' ');
-                        blogList.innerHTML += `
-                            <div class="col-md-4 mb-4">
-                                <a href="${link}" class="text-decoration-none text-dark">
-                                    <div class="card blog-card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">${title}</h5>
-                                            <p class="card-text">Read more &rarr;</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>`;
-                    });
-                }
-            } catch (error) {
-                blogList.innerHTML = '<p>Error loading posts. Please try again later.</p>';
-                console.error('Error fetching blog posts:', error);
+            if (posts.length === 0) {
+                postContainer.innerHTML = '<p>No posts available.</p>';
+                return;
             }
+
+            // Render posts
+            posts.forEach(post => {
+                postContainer.innerHTML += `
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">${post.title}</h5>
+                                <p class="text-muted">${post.date}</p>
+                                <a href="${post.url}" class="btn btn-primary">Read More →</a>
+                            </div>
+                        </div>
+                    </div>`;
+            });
         }
 
         fetchPosts();
