@@ -295,6 +295,7 @@ body {
     cursor: move;
     z-index: 5;
     user-select: none;
+    transition: opacity 0.2s;
 }
 
 .text-box:hover {
@@ -596,6 +597,15 @@ body {
         padding: 10px;
         font-size: 13px;
     }
+}
+
+.text-box {
+    transition: opacity 0.2s;
+}
+
+.text-box.dragging {
+    opacity: 0.7;
+    cursor: move;
 }
 
     </style>
@@ -1118,34 +1128,7 @@ body {
     }
     
     async function exportToPDF() {
-        // Create a temporary canvas
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = canvas.width;
-        tempCanvas.height = canvas.height;
-        const tempCtx = tempCanvas.getContext('2d');
-
-        // Fill with white background
-        tempCtx.fillStyle = 'white';
-        tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-
-        // Draw the main canvas content
-        tempCtx.drawImage(canvas, 0, 0);
-
-        // Draw text boxes
-        textBoxes.forEach(box => {
-            tempCtx.font = `${box.fontSize}px Arial`;
-            tempCtx.fillStyle = box.color;
-            tempCtx.textBaseline = 'top';
-            
-            const lines = box.text.split('\n');
-            lines.forEach((line, index) => {
-                const yOffset = index * (box.fontSize * 1.2);
-                tempCtx.fillText(line, box.x, box.y + yOffset);
-            });
-        });
-
         try {
-            // Create PDF
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF({
                 orientation: 'landscape',
@@ -1153,24 +1136,45 @@ body {
                 format: [canvas.width, canvas.height]
             });
 
-            // Add pages
             for (let i = 0; i < pages.length; i++) {
                 if (i > 0) {
                     pdf.addPage();
                 }
 
-                if (i === currentPage) {
-                    // Current page - use the temporary canvas with text
-                    const imgData = tempCanvas.toDataURL('image/png');
-                    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-                } else {
-                    // Other pages - use stored data
-                    const pageData = pages[i].canvasData;
-                    pdf.addImage(pageData, 'PNG', 0, 0, canvas.width, canvas.height);
-                }
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = canvas.width;
+                tempCanvas.height = canvas.height;
+                const tempCtx = tempCanvas.getContext('2d');
+
+                // Fill white background
+                tempCtx.fillStyle = 'white';
+                tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+                // Draw the canvas content
+                const pageData = pages[i];
+                const img = new Image();
+                img.src = pageData.canvasData;
+                tempCtx.drawImage(img, 0, 0);
+
+                // Draw text boxes
+                const pageTextBoxes = i === currentPage ? textBoxes : pageData.textBoxes || [];
+                pageTextBoxes.forEach(box => {
+                    tempCtx.font = `${box.fontSize}px Arial`;
+                    tempCtx.fillStyle = box.color;
+                    tempCtx.textBaseline = 'top';
+                    
+                    const lines = box.text.split('\n');
+                    lines.forEach((line, lineIndex) => {
+                        const yOffset = lineIndex * (box.fontSize * 1.2);
+                        tempCtx.fillText(line, box.x, box.y + yOffset);
+                    });
+                });
+
+                // Add to PDF
+                const imgData = tempCanvas.toDataURL('image/png');
+                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
             }
 
-            // Save the PDF
             pdf.save('whiteboard.pdf');
         } catch (error) {
             console.error('Error creating PDF:', error);
@@ -1323,15 +1327,18 @@ body {
         textBoxes.forEach(box => renderTextBox(box));
     }
     
-    // Dragging functionality
+    // Update the text box dragging functions
     function startDragging(e) {
+        if (currentTool !== "text") return;
+        
         const textBox = e.currentTarget;
         if (e.target.closest('.text-box-controls')) {
-            return; // Don't start dragging if clicking controls
+            return;
         }
 
         isDragging = true;
         activeTextBox = textBox;
+        textBox.classList.add('dragging');
         
         const rect = textBox.getBoundingClientRect();
         dragStartX = e.clientX - rect.left;
@@ -1339,6 +1346,7 @@ body {
         
         document.addEventListener('mousemove', moveTextBox);
         document.addEventListener('mouseup', stopDragging);
+        document.addEventListener('dblclick', setFinalPosition);
         
         e.preventDefault();
     }
@@ -1346,21 +1354,24 @@ body {
     function moveTextBox(e) {
         if (!isDragging || !activeTextBox) return;
         
-        const canvasContainer = document.querySelector('.canvas-container');
-        const rect = canvasContainer.getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
+        let newX = e.clientX - canvasRect.left - dragStartX;
+        let newY = e.clientY - canvasRect.top - dragStartY;
         
-        let newX = e.clientX - rect.left - dragStartX;
-        let newY = e.clientY - rect.top - dragStartY;
-        
-        // Boundary checks
-        newX = Math.max(0, Math.min(newX, canvasContainer.offsetWidth - activeTextBox.offsetWidth));
-        newY = Math.max(0, Math.min(newY, canvasContainer.offsetHeight - activeTextBox.offsetHeight));
+        // Add bounds checking
+        newX = Math.max(0, Math.min(newX, canvas.width - activeTextBox.offsetWidth));
+        newY = Math.max(0, Math.min(newY, canvas.height - activeTextBox.offsetHeight));
         
         activeTextBox.style.left = `${newX}px`;
         activeTextBox.style.top = `${newY}px`;
     }
     
     function stopDragging() {
+        if (!isDragging || !activeTextBox) return;
+        document.removeEventListener('mousemove', moveTextBox);
+    }
+    
+    function setFinalPosition() {
         if (!isDragging || !activeTextBox) return;
         
         const id = parseInt(activeTextBox.dataset.id);
@@ -1372,11 +1383,13 @@ body {
             saveCanvasState();
         }
         
+        activeTextBox.classList.remove('dragging');
         isDragging = false;
         activeTextBox = null;
         
         document.removeEventListener('mousemove', moveTextBox);
         document.removeEventListener('mouseup', stopDragging);
+        document.removeEventListener('dblclick', setFinalPosition);
     }
     
     // Event Listeners
@@ -1441,7 +1454,6 @@ body {
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            
             showTextEditor(x, y);
         }
     });
