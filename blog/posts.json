@@ -1,4 +1,10 @@
 [
-  "post1.html",
-  
+    {
+        "title": "My First Blog",
+        "url": "https://yourdomain.com/post1.html"
+    },
+    {
+        "title": "My Second Blog",
+        "url": "https://yourdomain.com/blog2.html"
+    }
 ]
