@@ -1,47 +1,11 @@
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enhanced Online Whiteboard</title>
+<meta name="application-version" content="3.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<script>
-
-		(function () {
-  const scriptURL = "YOUR_GOOGLE_APPS_SCRIPT_URL"; // Replace this
-
-  console.log("Click tracking script loaded."); // Debug log
-  console.log("Sending data to:", scriptURL); 
-
-  document.addEventListener("click", (event) => {
-    const element = event.target;
-    const tagName = element.tagName.toLowerCase();
-    const elementID = element.id || `auto-id-${Math.random().toString(36).substr(2, 9)}`;
-
-    console.log("Clicked element:", tagName, "ID:", elementID); // Debugging log
-
-    fetch(scriptURL, {
-      method: "POST",
-      body: JSON.stringify({
-        websiteFolder: window.location.hostname,
-        tagName,
-        elementID,
-        clicks: 1,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then(response => response.text())
-    .then(data => console.log("Response from Google Sheets:", data))
-    .catch(error => console.error("Error sending data:", error));
-  });
-})();
-
-	</script>
     <style>
 /* Base Styles */
 body {
@@ -505,10 +469,136 @@ body {
         color: white;
     }
 }
+
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.popup-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;
+    transform: scale(0.7);
+    opacity: 0;
+    animation: scaleIn 0.3s ease-out forwards;
+}
+
+.popup-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.warning-icon {
+    color: #ff9800;
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+.popup-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.popup-body {
+    margin-bottom: 20px;
+}
+
+.popup-body p {
+    margin: 0;
+    color: #666;
+    line-height: 1.5;
+}
+
+.popup-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.popup-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
+}
+
+.cancel-btn {
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+.cancel-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.confirm-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.confirm-btn:hover {
+    background-color: #c82333;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.7);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 480px) {
+    .popup-content {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .popup-btn {
+        padding: 10px;
+        font-size: 13px;
+    }
+}
+
     </style>
 </head>
 <body>
-    <div class="container">
+   
+
+
+	  
+	   <div class="container">
         <div class="toolbar">
             <div class="dropdown">
                 <button id="penTool" class="tool-btn active">
@@ -560,7 +650,7 @@ body {
                     <div class="thickness-container">
                         <label class="thickness-label">Neon Size</label>
                         <input type="range" id="neonSizeSlider" class="thickness-slider" min="1" max="50" value="10">
-                        <span id="neonSizeValue" style="color: white;">10px</span>
+                        <span id="neonSizeValue" style="color: white;">3px</span>
                     </div>
                 </div>
             </div>
@@ -603,7 +693,33 @@ body {
                 <canvas id="whiteboard"></canvas>
             </div>
         </div>
+		
+		
+		
+		
+		
     </div>
+
+    <div id="confirmationPopup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-header">
+                <i class="fas fa-exclamation-triangle warning-icon"></i>
+                <h3>Clear Canvas</h3>
+            </div>
+            <div class="popup-body">
+                <p>Are you sure you want to clear the entire canvas? This action cannot be undone.</p>
+            </div>
+            <div class="popup-footer">
+                <button id="cancelClear" class="popup-btn cancel-btn">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button id="confirmClear" class="popup-btn confirm-btn">
+                    <i class="fas fa-check"></i> Clear Canvas
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
      const canvas = document.getElementById("whiteboard");
@@ -995,47 +1111,53 @@ body {
     }
     
     async function exportToPDF() {
-        // Temporarily hide text boxes to capture canvas only
-        document.querySelectorAll('.text-box').forEach(box => {
-            box.style.visibility = 'hidden';
-        });
-        
-        // Render text boxes directly on canvas for export
-        const tempTextBoxes = [...textBoxes];
-        tempTextBoxes.forEach(box => {
-            ctx.font = `${box.fontSize}px Arial`;
-            ctx.fillStyle = box.color;
+        // Create a temporary canvas to combine drawing and text
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        const tempCtx = tempCanvas.getContext('2d');
+
+        // Copy the main canvas content
+        tempCtx.fillStyle = "white";
+        tempCtx.fillRect(0, 0, canvas.width, canvas.height);
+        tempCtx.drawImage(canvas, 0, 0);
+
+        // Draw all text boxes onto the temporary canvas
+        textBoxes.forEach(box => {
+            tempCtx.font = `${box.fontSize}px Arial`;
+            tempCtx.fillStyle = box.color;
             
-            // Split text into lines and render
+            // Split text into lines and render each line
             const lines = box.text.split('\n');
             lines.forEach((line, index) => {
-                ctx.fillText(line, box.x, box.y + 5 + index * (box.fontSize * 1.2));
+                tempCtx.fillText(
+                    line, 
+                    box.x, 
+                    box.y + (index * (box.fontSize * 1.2))
+                );
             });
         });
-        
-        // Proceed with PDF export
+
+        // Proceed with PDF export using the temporary canvas
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('l', 'px', [canvas.width, canvas.height]);
-        
+
         for (let i = 0; i < pages.length; i++) {
             if (i > 0) {
                 pdf.addPage();
             }
-            
-            const imgData = typeof pages[i] === 'string' ? 
-                pages[i] : 
-                pages[i].canvasData;
-                
-            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+
+            if (i === currentPage) {
+                // Use the temporary canvas for current page
+                pdf.addImage(tempCanvas.toDataURL(), 'PNG', 0, 0, canvas.width, canvas.height);
+            } else {
+                // Use stored data for other pages
+                const pageData = typeof pages[i] === 'string' ? pages[i] : pages[i].canvasData;
+                pdf.addImage(pageData, 'PNG', 0, 0, canvas.width, canvas.height);
+            }
         }
-        
+
         pdf.save('whiteboard.pdf');
-        
-        // Restore canvas and text boxes
-        redrawCanvas();
-        document.querySelectorAll('.text-box').forEach(box => {
-            box.style.visibility = 'visible';
-        });
     }
     
     // Text Tool Functions
@@ -1109,22 +1231,20 @@ body {
     }
     
     function renderTextBox(textBoxData) {
-        // Create text box container
         const textBox = document.createElement('div');
         textBox.className = 'text-box';
         textBox.id = `text-box-${textBoxData.id}`;
         textBox.dataset.id = textBoxData.id;
         textBox.style.left = textBoxData.x + 'px';
         textBox.style.top = textBoxData.y + 'px';
+        textBox.style.cursor = 'move';
         
-        // Create text content
         const textContent = document.createElement('div');
         textContent.className = 'text-content';
         textContent.style.fontSize = textBoxData.fontSize + 'px';
         textContent.style.color = textBoxData.color;
         textContent.textContent = textBoxData.text;
         
-        // Create controls
         const controls = document.createElement('div');
         controls.className = 'text-box-controls';
         
@@ -1133,7 +1253,6 @@ body {
         editBtn.innerHTML = '<i class="fas fa-edit"></i>';
         editBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            const rect = textBox.getBoundingClientRect();
             showTextEditor(textBoxData.x, textBoxData.y, textBoxData);
         });
         
@@ -1148,11 +1267,9 @@ body {
         controls.appendChild(editBtn);
         controls.appendChild(deleteBtn);
         
-        // Add elements to text box
         textBox.appendChild(textContent);
         textBox.appendChild(controls);
         
-        // Add drag functionality
         textBox.addEventListener('mousedown', startDragging);
         
         document.querySelector('.canvas-container').appendChild(textBox);
@@ -1193,6 +1310,10 @@ body {
         if (currentTool !== "text") return;
         
         const textBox = e.currentTarget;
+        if (e.target.closest('.text-box-controls')) {
+            return; // Don't start dragging if clicking controls
+        }
+
         activeTextBox = textBox;
         isDragging = true;
         
@@ -1213,8 +1334,12 @@ body {
         if (!isDragging || !activeTextBox) return;
         
         const canvasRect = canvas.getBoundingClientRect();
-        const newX = e.clientX - canvasRect.left - dragStartX;
-        const newY = e.clientY - canvasRect.top - dragStartY;
+        let newX = e.clientX - canvasRect.left - dragStartX;
+        let newY = e.clientY - canvasRect.top - dragStartY;
+        
+        // Add bounds checking
+        newX = Math.max(0, Math.min(newX, canvas.width - activeTextBox.offsetWidth));
+        newY = Math.max(0, Math.min(newY, canvas.height - activeTextBox.offsetHeight));
         
         activeTextBox.style.left = newX + 'px';
         activeTextBox.style.top = newY + 'px';
@@ -1229,8 +1354,12 @@ body {
         
         if (index !== -1) {
             const canvasRect = canvas.getBoundingClientRect();
-            const newX = e.clientX - canvasRect.left - dragStartX;
-            const newY = e.clientY - canvasRect.top - dragStartY;
+            let newX = e.clientX - canvasRect.left - dragStartX;
+            let newY = e.clientY - canvasRect.top - dragStartY;
+            
+            // Add bounds checking
+            newX = Math.max(0, Math.min(newX, canvas.width - activeTextBox.offsetWidth));
+            newY = Math.max(0, Math.min(newY, canvas.height - activeTextBox.offsetHeight));
             
             textBoxes[index].x = newX;
             textBoxes[index].y = newY;
@@ -1436,7 +1565,9 @@ body {
     });
     
     // Tool buttons
-    clearCanvas.addEventListener("click", () => clearCanvasContent(true));
+    clearCanvas.addEventListener("click", () => {
+        confirmationPopup.style.display = 'flex';
+    });
     addPage.addEventListener("click", addNewPage);
     fullscreenTool.addEventListener("click", toggleFullscreen);
     exportPDF.addEventListener("click", exportToPDF);
@@ -1723,7 +1854,44 @@ style.textContent = `
 document.head.appendChild(style);
     initialize();
 
-   
+    // Add these variables with your other declarations
+    const confirmationPopup = document.getElementById('confirmationPopup');
+    const cancelClear = document.getElementById('cancelClear');
+    const confirmClear = document.getElementById('confirmClear');
+
+    // Replace your existing clearCanvas click handler with this
+    clearCanvas.addEventListener("click", () => {
+        confirmationPopup.style.display = 'flex';
+    });
+
+    // Add these new event listeners
+    cancelClear.addEventListener('click', () => {
+        confirmationPopup.style.display = 'none';
+    });
+
+    confirmClear.addEventListener('click', () => {
+        clearCanvasContent(true);
+        confirmationPopup.style.display = 'none';
+    });
+
+    // Close popup when clicking outside
+    confirmationPopup.addEventListener('click', (e) => {
+        if (e.target === confirmationPopup) {
+            confirmationPopup.style.display = 'none';
+        }
+    });
+
+    // Add keyboard support for the popup
+    document.addEventListener('keydown', (e) => {
+        if (confirmationPopup.style.display === 'flex') {
+            if (e.key === 'Escape') {
+                confirmationPopup.style.display = 'none';
+            } else if (e.key === 'Enter') {
+                clearCanvasContent(true);
+                confirmationPopup.style.display = 'none';
+            }
+        }
+    });
     </script>
 </body>
 </html>
