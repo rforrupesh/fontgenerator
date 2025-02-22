@@ -21,7 +21,7 @@
                 data.forEach(file => {
                     if (file.name.endsWith('.html')) {
                         const link = document.createElement('a');
-                        link.href = `/blog/${file.name}`;
+                        link.href = `https://rforrupesh.github.io/fontgenerator/blog/${file.name}`;
                         link.innerText = file.name.replace('.html', '');
                         link.style.display = 'block';
                         blogList.appendChild(link);
