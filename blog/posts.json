@@ -1,13 +1,5 @@
 [
-  {
-    "title": "My First Blog Post",
-    "filename": "my-first-blog-post.html",
-    "date": "2023-05-01"
-  },
-  {
-    "title": "Another Interesting Article",
-    "filename": "another-interesting-article.html",
-    "date": "2023-05-15"
-  }
+  "blog1.html",
+  "blog2.html",
+  "blog3.html"
 ]
-
