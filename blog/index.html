@@ -1,1 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Blog Listing</title>
+</head>
+<body>
+    <h1>Blog Posts</h1>
+    <div id="blogList"></div>
+
+    <script>
+        async function fetchBlogList() {
+            try {
+                const response = await fetch('/blog/post.json');
+                const blogs = await response.json();
+                const blogList = document.getElementById('blogList');
+
+                blogs.forEach(blog => {
+                    const link = document.createElement('a');
+                    link.href = `/blog/${blog}`;
+                    link.innerText = blog.replace('.html', '');
+                    link.style.display = 'block';
+                    blogList.appendChild(link);
+                });
+            } catch (error) {
+                console.error('Error fetching blog list:', error);
+            }
+        }
+        fetchBlogList();
+    </script>
+</body>
+</html>
 
