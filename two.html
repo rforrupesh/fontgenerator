@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enhanced Online Whiteboard</title>
-<meta name="application-version" content="3.0">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
 /* Base Styles */
@@ -294,6 +294,7 @@ body {
     padding: 5px;
     cursor: move;
     z-index: 5;
+    user-select: none;
 }
 
 .text-box:hover {
@@ -315,6 +316,12 @@ body {
 
 .text-box:hover .text-box-controls {
     opacity: 1;
+}
+
+.text-content {
+    white-space: pre-wrap;
+    min-width: 50px;
+    min-height: 20px;
 }
 
 .text-box-control-btn {
@@ -1111,53 +1118,63 @@ body {
     }
     
     async function exportToPDF() {
-        // Create a temporary canvas to combine drawing and text
+        // Create a temporary canvas
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = canvas.width;
         tempCanvas.height = canvas.height;
         const tempCtx = tempCanvas.getContext('2d');
 
-        // Copy the main canvas content
-        tempCtx.fillStyle = "white";
-        tempCtx.fillRect(0, 0, canvas.width, canvas.height);
+        // Fill with white background
+        tempCtx.fillStyle = 'white';
+        tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+        // Draw the main canvas content
         tempCtx.drawImage(canvas, 0, 0);
 
-        // Draw all text boxes onto the temporary canvas
+        // Draw text boxes
         textBoxes.forEach(box => {
             tempCtx.font = `${box.fontSize}px Arial`;
             tempCtx.fillStyle = box.color;
+            tempCtx.textBaseline = 'top';
             
-            // Split text into lines and render each line
             const lines = box.text.split('\n');
             lines.forEach((line, index) => {
-                tempCtx.fillText(
-                    line, 
-                    box.x, 
-                    box.y + (index * (box.fontSize * 1.2))
-                );
+                const yOffset = index * (box.fontSize * 1.2);
+                tempCtx.fillText(line, box.x, box.y + yOffset);
             });
         });
 
-        // Proceed with PDF export using the temporary canvas
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('l', 'px', [canvas.width, canvas.height]);
+        try {
+            // Create PDF
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: 'landscape',
+                unit: 'px',
+                format: [canvas.width, canvas.height]
+            });
 
-        for (let i = 0; i < pages.length; i++) {
-            if (i > 0) {
-                pdf.addPage();
+            // Add pages
+            for (let i = 0; i < pages.length; i++) {
+                if (i > 0) {
+                    pdf.addPage();
+                }
+
+                if (i === currentPage) {
+                    // Current page - use the temporary canvas with text
+                    const imgData = tempCanvas.toDataURL('image/png');
+                    pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+                } else {
+                    // Other pages - use stored data
+                    const pageData = pages[i].canvasData;
+                    pdf.addImage(pageData, 'PNG', 0, 0, canvas.width, canvas.height);
+                }
             }
 
-            if (i === currentPage) {
-                // Use the temporary canvas for current page
-                pdf.addImage(tempCanvas.toDataURL(), 'PNG', 0, 0, canvas.width, canvas.height);
-            } else {
-                // Use stored data for other pages
-                const pageData = typeof pages[i] === 'string' ? pages[i] : pages[i].canvasData;
-                pdf.addImage(pageData, 'PNG', 0, 0, canvas.width, canvas.height);
-            }
+            // Save the PDF
+            pdf.save('whiteboard.pdf');
+        } catch (error) {
+            console.error('Error creating PDF:', error);
         }
-
-        pdf.save('whiteboard.pdf');
     }
     
     // Text Tool Functions
@@ -1235,13 +1252,13 @@ body {
         textBox.className = 'text-box';
         textBox.id = `text-box-${textBoxData.id}`;
         textBox.dataset.id = textBoxData.id;
-        textBox.style.left = textBoxData.x + 'px';
-        textBox.style.top = textBoxData.y + 'px';
-        textBox.style.cursor = 'move';
+        textBox.style.left = `${textBoxData.x}px`;
+        textBox.style.top = `${textBoxData.y}px`;
+        textBox.style.position = 'absolute';
         
         const textContent = document.createElement('div');
         textContent.className = 'text-content';
-        textContent.style.fontSize = textBoxData.fontSize + 'px';
+        textContent.style.fontSize = `${textBoxData.fontSize}px`;
         textContent.style.color = textBoxData.color;
         textContent.textContent = textBoxData.text;
         
@@ -1270,6 +1287,7 @@ body {
         textBox.appendChild(textContent);
         textBox.appendChild(controls);
         
+        // Add mousedown event listener for dragging
         textBox.addEventListener('mousedown', startDragging);
         
         document.querySelector('.canvas-container').appendChild(textBox);
@@ -1307,23 +1325,18 @@ body {
     
     // Dragging functionality
     function startDragging(e) {
-        if (currentTool !== "text") return;
-        
         const textBox = e.currentTarget;
         if (e.target.closest('.text-box-controls')) {
             return; // Don't start dragging if clicking controls
         }
 
-        activeTextBox = textBox;
         isDragging = true;
+        activeTextBox = textBox;
         
         const rect = textBox.getBoundingClientRect();
         dragStartX = e.clientX - rect.left;
         dragStartY = e.clientY - rect.top;
         
-        textBox.style.cursor = 'grabbing';
-        
-        // Add temporary event listeners
         document.addEventListener('mousemove', moveTextBox);
         document.addEventListener('mouseup', stopDragging);
         
@@ -1333,44 +1346,35 @@ body {
     function moveTextBox(e) {
         if (!isDragging || !activeTextBox) return;
         
-        const canvasRect = canvas.getBoundingClientRect();
-        let newX = e.clientX - canvasRect.left - dragStartX;
-        let newY = e.clientY - canvasRect.top - dragStartY;
+        const canvasContainer = document.querySelector('.canvas-container');
+        const rect = canvasContainer.getBoundingClientRect();
         
-        // Add bounds checking
-        newX = Math.max(0, Math.min(newX, canvas.width - activeTextBox.offsetWidth));
-        newY = Math.max(0, Math.min(newY, canvas.height - activeTextBox.offsetHeight));
+        let newX = e.clientX - rect.left - dragStartX;
+        let newY = e.clientY - rect.top - dragStartY;
         
-        activeTextBox.style.left = newX + 'px';
-        activeTextBox.style.top = newY + 'px';
+        // Boundary checks
+        newX = Math.max(0, Math.min(newX, canvasContainer.offsetWidth - activeTextBox.offsetWidth));
+        newY = Math.max(0, Math.min(newY, canvasContainer.offsetHeight - activeTextBox.offsetHeight));
+        
+        activeTextBox.style.left = `${newX}px`;
+        activeTextBox.style.top = `${newY}px`;
     }
     
-    function stopDragging(e) {
+    function stopDragging() {
         if (!isDragging || !activeTextBox) return;
         
-        // Update text box position in data
         const id = parseInt(activeTextBox.dataset.id);
         const index = textBoxes.findIndex(box => box.id === id);
         
         if (index !== -1) {
-            const canvasRect = canvas.getBoundingClientRect();
-            let newX = e.clientX - canvasRect.left - dragStartX;
-            let newY = e.clientY - canvasRect.top - dragStartY;
-            
-            // Add bounds checking
-            newX = Math.max(0, Math.min(newX, canvas.width - activeTextBox.offsetWidth));
-            newY = Math.max(0, Math.min(newY, canvas.height - activeTextBox.offsetHeight));
-            
-            textBoxes[index].x = newX;
-            textBoxes[index].y = newY;
+            textBoxes[index].x = parseInt(activeTextBox.style.left);
+            textBoxes[index].y = parseInt(activeTextBox.style.top);
             saveCanvasState();
         }
         
-        activeTextBox.style.cursor = 'move';
         isDragging = false;
         activeTextBox = null;
         
-        // Remove temporary event listeners
         document.removeEventListener('mousemove', moveTextBox);
         document.removeEventListener('mouseup', stopDragging);
     }
