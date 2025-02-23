@@ -11,12 +11,51 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Generate Sitemap
-        uses: cicirello/generate-sitemap@v1
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          base-url-path: "https://rforrupesh.github.io/fontgenerator"  # Update this to your site's base URL
-          change-frequency: "weekly"
-          file-path: "sitemap.xml"
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install beautifulsoup4
+
+      - name: Generate Sitemap
+        run: |
+          import os
+          from bs4 import BeautifulSoup
+
+          # Define the base URL and blog directory
+          base_url = "https://rforrupesh.github.io/fontgenerator"
+          blog_dir = "blog"  # Path to your blog directory
+          sitemap_path = "sitemap.xml"
+
+          # Create a list to store URLs
+          urls = []
+
+          # Crawl the blog directory for HTML files
+          for root, dirs, files in os.walk(blog_dir):
+              for file in files:
+                  if file.endswith(".html"):
+                      # Construct the full URL
+                      relative_path = os.path.relpath(os.path.join(root, file), blog_dir)
+                      full_url = f"{base_url}/{blog_dir}/{relative_path}"
+                      urls.append(full_url)
+
+          # Generate the sitemap XML
+          sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n'
+          sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+          for url in urls:
+              sitemap += f'  <url>\n    <loc>{url}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n'
+          sitemap += '</urlset>'
+
+          # Write the sitemap to a file
+          with open(sitemap_path, "w") as f:
+              f.write(sitemap)
+
+          print("Sitemap generated successfully!")
+        shell: python
 
       - name: Commit and Push Sitemap
         run: |
