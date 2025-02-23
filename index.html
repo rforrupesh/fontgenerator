@@ -681,6 +681,13 @@
                 width: 100%; /* Full-width buttons for better tap targets */
             }
         }
+
+        @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+   
     </style>
 </head>
 
@@ -1693,6 +1700,158 @@
     </p>   
          <p>  Remember, because they're Unicode, they'll work almost anywhere online!</p>
     </div>
+
+    <div class="container px-2 py-2 mt-5">
+        <h2 class="pb-2 text-center display-4">FAQ</h2>
+        <div class="accordion" id="fancyTextAccordion">
+    
+            <!-- What is Fancy Text? -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                        What is Fancy Text?
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#fancyTextAccordion">
+                    <div class="accordion-body">
+                        Fancy text refers to unique and decorative characters created using Unicode symbols. It is a collection of special cool fonts that give your ordinary text a stylish and eye-catching appearance.
+                    </div>
+                </div>
+            </div>
+    
+            <!-- How to Generate Fancy Fonts? -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        How to Generate Fancy Fonts?
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#fancyTextAccordion">
+                    <div class="accordion-body">
+                        Websites like <a href="https://fontgenerator.click" target="_blank">fontgenerator</a> help you convert ordinary text into cool, fancy text, Font Styles. They also provide copy-and-paste buttons, making them one of the best fancy text generators available.
+                    </div>
+                </div>
+            </div>
+    
+            <!-- How to Copy and Paste Font Styles? -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        How to Copy and Paste Font Styles?
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#fancyTextAccordion">
+                    <div class="accordion-body">
+                        We have added a "Copy to Clipboard" button—simply click on it to copy the fancy text. It is a convenient and free tool that allows you to select and copy fancy text easily. Once copied, the text is stored on your clipboard, ready to be pasted anywhere.
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Where to use these Cool Text Symbols? -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        Where to use these Cool Text Symbols?
+                    </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#fancyTextAccordion">
+                    <div class="accordion-body">
+                        You can use them on Instagram, Facebook, TikTok, and more! These special fancy text symbols, letters, and characters are perfect for your social media posts, website articles, and beyond.
+                    </div>
+                </div>
+            </div>
+    
+        </div>
+    </div>
+
+
+    <footer class="bg-white text-black py-3">
+        <div class="container">
+            <!-- Social Media Share Section -->
+            <div class="text-center mb-4">
+                <button class="btn btn-outline-primary" onclick="toggleShareBox()">Share</button>
+                <div id="shareBox" class="mt-3 p-3 rounded shadow-sm d-none" style="animation: fadeIn 0.3s ease-in-out; position: relative;">
+                    <p id="urlPreview" class="mb-3 text-muted"></p>
+                    <a href="#" id="shareFacebook" onclick="openShareWindow(this.href)" class="me-3" title="Share on Facebook">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
+                            <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951"/>
+                        </svg>
+                    </a>
+                    <a href="#" id="shareTwitter" onclick="openShareWindow(this.href)" class="me-3" title="Share on X">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
+                            <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
+                        </svg>
+                    </a>
+                    <a href="#" id="shareWhatsapp" onclick="openShareWindow(this.href)" class="me-3" title="Share on WhatsApp">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-whatsapp" viewBox="0 0 16 16">
+                            <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
+                        </svg>
+                    </a>
+                    <button class="btn btn-outline-secondary" onclick="copyLink()" id="copyButton">Copy Link</button>
+                    <div id="copyPopup" class="popup-box d-none">Link copied: <span id="copyUrl"></span></div>
+                </div>
+            </div>
+    
+            <div class="d-flex flex-column flex-md-row justify-content-between text-center text-md-start">
+                <p class="mb-2 mb-md-0">&copy; <a href="https://fontgenerator.click" class="text-primary" target="_blank">FontGenerator.click</a> 2025</p>
+                <p>
+                    <a href="#" class="text-primary me-3">Privacy Policy</a>
+                    <a href="#" class="text-primary me-3">About Us</a>
+                    <a href="#" class="text-primary">Contact</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        function toggleShareBox() {
+            const shareBox = document.getElementById('shareBox');
+            shareBox.classList.toggle('d-none');
+            const currentUrl = window.location.href;
+            const encodedUrl = encodeURIComponent(currentUrl);
+    
+            document.getElementById('shareFacebook').href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+            document.getElementById('shareTwitter').href = `https://twitter.com/intent/tweet?url=${encodedUrl}`;
+            document.getElementById('shareWhatsapp').href = `https://wa.me/?text=${encodedUrl}`;
+    
+            document.getElementById('urlPreview').textContent = currentUrl;
+        }
+    
+        function openShareWindow(url) {
+            window.open(url, 'shareWindow', 'width=600,height=400');
+            return false;
+        }
+    
+        function copyLink() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                const popup = document.getElementById('copyPopup');
+                popup.classList.remove('d-none');
+                document.getElementById('copyUrl').textContent = url;
+                setTimeout(() => popup.classList.add('d-none'), 3000);
+            });
+        }
+    </script>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .popup-box {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #000;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 8px;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+</style>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
     </script>
     <script>
