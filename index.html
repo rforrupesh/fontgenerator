@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Font Generator</title>
     <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
@@ -622,6 +621,38 @@
                 width: 20px;
                 height: 20px;
             }
+        }
+
+        .fontgenerator .tab-btn {
+            width: 150px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff; /* Default background for unselected tabs */
+        }
+        .fontgenerator .tab-btn:hover {
+            box-shadow: 0 6px 12px rgba(53, 43, 105, 0.15);
+            background-color: #11123629; /* Hover color */
+
+        }
+        .fontgenerator .tab-btn.active {
+            background-color: #0d6efd; /* Background for selected tab */
+            color: white;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .fontgenerator .tab-content {
+            padding: 20px;
+            border-radius: 15px;
+           
+            background: #ffffff;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
@@ -1539,7 +1570,7 @@
         </div>
     </div>
 
-    <div class="container px-4 py-5" id="hanging-icons">
+    <div class="container px-4 py-2" id="hanging-icons">
         <h2 class="pb-2 text-center display-4 border-bottom">How people are using Fancy Text Generator </h2>
         <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
           <div class="col d-flex align-items-start">
@@ -1583,7 +1614,53 @@
           </div>
         </div>
       </div>
-    
+    <div class="container">
+
+        <h2 class="pb-2 text-center display-4 border-bottom">Where People Use Fonts</h2>
+        <p>The use cases of fancy fonts are beyond your imagination. People use them for fun, and some use them to create unique fonts. However, I have observed and confirmed that people use them more frequently in these cases.
+        </p>
+
+        
+<div class="justify-content-center container mt-5 fontgenerator">
+    <div class="justify-content-center d-flex flex-row gap-3 mb-3" id="tab-buttons">
+        <button class="btn tab-btn active" onclick="showTab('fonts', this)">Fonts Online</button>
+        <button class="btn tab-btn" onclick="showTab('clan', this)">Clan Names</button>
+        <button class="btn tab-btn" onclick="showTab('art', this)">Art</button>
+        <button class="btn tab-btn" onclick="showTab('documents', this)">Documents</button>
+        <button class="btn tab-btn" onclick="showTab('message', this)">Message</button>
+        <button class="btn tab-btn" onclick="showTab('social', this)">Social Media</button>
+    </div>
+
+    <div id="fonts" class="tab-content">
+        <p>Instantly enhance your website's aesthetic with our vast collection of online fonts. No installations, no complex coding – just seamless copy-and-paste integration. Perfect for developers and website owners seeking a quick and stylish typography solution.</p>
+    </div>
+
+    <div id="clan" class="tab-content d-none">
+        <p>to dear gamers Level up your gaming identity! change your nickname with our arsenal of unique and stylish fonts. Dominate the leaderboards with a personalized touch that sets you apart in any game.
+        </p>
+       
+        <div id="clan-name-output" class="mt-3"></div>
+    </div>
+
+    <div id="art" class="tab-content d-none">
+        <p>For creative individuals, our fancy text generator brings online designs to life. Visualize your ideas with eye-catching fonts like Cool Numbers, Bubble, Double Struck, and emoji styles. Our diverse collection is finely tuned to your projects.</p>
+    </div>
+
+    <div id="documents" class="tab-content d-none">
+        <p>Working on Google Sheets and Microsoft PowerPoint just got more exciting! Add cursive text, bold letters, and even emojis to make your daily sheets less boring with our cool letter generator.</p>
+    </div>
+
+    <div id="message" class="tab-content d-none">
+        <p>Chatting in plain text won’t make your night more interesting. Give it one more second with Echo Font, Love Font, and other stylish text to make your chat screen pop and spark new topics. Curious minds will ask, 'How did you do that?'—that’s your cue to share this tool.</p>
+    </div>
+
+    <div id="social" class="tab-content d-none">
+        <p>Create unique and eye-catching bios and profiles with our custom font and symbol generator. Works seamlessly across all major platforms including TikTok, Facebook, Instagram, YouTube, and more. This allows for a more personalized profile.</p>
+    </div>
+</div>
+
+    </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
     </script>
@@ -5890,7 +5967,26 @@
         });
     </script>
 
+<script>
+    function showTab(tabId, el) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.add('d-none');
+        });
+        document.getElementById(tabId).classList.remove('d-none');
 
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        el.classList.add('active');
+    }
+
+   
+
+    // Set the first tab active by default
+    document.addEventListener("DOMContentLoaded", function() {
+        showTab('fonts', document.querySelector('.tab-btn.active'));
+    });
+</script>
 
 </body>
 
