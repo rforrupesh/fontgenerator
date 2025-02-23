@@ -9,12 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Generate Sitemap
         uses: cicirello/generate-sitemap@v1
         with:
-          base-url-path: "https://rforrupesh.github.io/fontgenerator"
+          base-url-path: "https://rforrupesh.github.io/fontgenerator"  # Update this to your site's base URL
           change-frequency: "weekly"
           file-path: "sitemap.xml"
 
