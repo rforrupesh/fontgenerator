@@ -1,137 +1,205 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd">
-
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 <!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
 
 
 <url>
   <loc>https://fontgenerator.click/</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>https://fontgenerator.click/tools/</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
   <loc>https://fontgenerator.click/faq.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/about-us.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/contact-us.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/privacy-policy.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://fontgenerator.click/typography-trends.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <loc>https://fontgenerator.click/es.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://fontgenerator.click/bold-or-italic.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <loc>https://fontgenerator.click/ar.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://fontgenerator.click/create-handwritten-fonts.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <loc>https://fontgenerator.click/fr.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://fontgenerator.click/fonts-for-social-media.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <loc>https://fontgenerator.click/de.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://fontgenerator.click/whatsapp-text.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <loc>https://fontgenerator.click/pt.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://fontgenerator.click/id.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://fontgenerator.click/hi.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://fontgenerator.click/it.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://fontgenerator.click/ja.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://fontgenerator.click/ru.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://fontgenerator.click/th.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://fontgenerator.click/tr.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://fontgenerator.click/vi.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/changelog.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/feedback.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
+  <loc>https://fontgenerator.click/tools/</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://fontgenerator.click/typography-trends.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://fontgenerator.click/bold-or-italic.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://fontgenerator.click/create-handwritten-fonts.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://fontgenerator.click/fonts-for-social-media.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://fontgenerator.click/whatsapp-text.html</loc>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
   <loc>https://fontgenerator.click/tools/cool.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/tools/fancy.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/tools/cursive.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/tools/small.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/tools/bold.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/tools/glitch.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/tools/case-converter.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/tools/beautiful.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/tools/text-art.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/tools/fancy-letters.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/tools/cute.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/tools/invisible.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
   <loc>https://fontgenerator.click/tools/strikethrough.html</loc>
-  <lastmod>2025-03-14T09:00:11+00:00</lastmod>
+  <lastmod>2025-03-24T08:15:17+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 
